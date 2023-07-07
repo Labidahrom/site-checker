@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+{% load bootstrap4 %}
+<div class="container wrapper flex-grow-1">
+<h1>Данные для добавления URL в проверку</h1>
+    <div class="row">
+        <div class="col-md-12">
+            <textarea id="myText" rows="4" class="form-control">{{ urls_data|join:"" }}</textarea>
+            <button onclick="myFunction()" class="btn btn-primary mt-2">Скопировать</button>
+        </div>
+    </div>
+    <script>
+        function myFunction() {
+            var copyText = document.getElementById("myText");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); /* For mobile devices */
+            document.execCommand("copy");
+        }
+    </script>
+</div>
+{% endblock %}

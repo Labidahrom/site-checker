@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Список URL</h1>
+<p><a href="{% url 'add_url' %}">Добавить УРЛ</a></p>
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>URL</th>
+        <th>Title</th>
+        <th>Коды ответа по http</th>
+        <th>Tекст на странице</th>
+        <th>Статус проверки</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for url in urls %}
+      <tr>
+        <td>{{ url.name }}</td>
+        <td>{{ url.expected_title }}</td>
+        <td>http: {{ url.expected_response_by_http }} | https: {{ url.expected_response_by_https }} </td>
+        <td>{{ url.expected_text }}</td>
+        <td>{{ url.check_details }}</td>
+        <td>
+          <form action="/" method="get">
+          {% csrf_token %}
+          <input type="submit" value='Изменить настройки'>
+          </form>
+          <form action="/" method="get">
+          {% csrf_token %}
+          <input type="submit" value='Удалить URL'>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+</table>
+  </div>
+{% endblock %}

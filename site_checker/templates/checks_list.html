@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Список проверок</h1>
+<form action="{% url 'start_checks' %}" method="post">
+{% csrf_token %}
+<input type="submit" value='Запустить проверку'>
+</form>
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>URL</th>
+        <th>Title</th>
+        <th>Коды ответа по http</th>
+        <th>Tекст на странице</th>
+        <th>Дата проверки</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for check in checks %}
+      <tr>
+        <td>{{ check.url_name }}</td>
+        <td>{{ check.has_expected_title }}</td>
+        <td>http: {{ check.actual_response_by_http }} | https: {{ check.actual_response_by_https }} </td>
+        <td>{{ check.has_expected_text }}</td>
+        <td>{{ check.created_at }}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+</table>
+  </div>
+{% endblock %}
