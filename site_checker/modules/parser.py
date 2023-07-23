@@ -1,10 +1,14 @@
 from bs4 import BeautifulSoup
 import requests
+import chardet
 
 def make_request(url):
     try:
         response = requests.get(url, allow_redirects=False)
         response.raise_for_status()
+        coding_check = chardet.detect(response.content)
+        encoding = coding_check['encoding']
+        response.encoding = encoding
         return response
     except requests.RequestException as e:
         print(f"Failed to make a request to {url}. Error: {e}")
@@ -32,8 +36,6 @@ def check_expected_text(content, text):
 def get_page_content(url):
     print(url)
     url = url.strip('\r')
-    print(type(url))
-    print(url)
     http_response = make_request(f'http://{url}')
     print('http_response:', http_response)
     https_response = make_request(f'https://{url}')

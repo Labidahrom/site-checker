@@ -14,6 +14,7 @@ class Url(models.Model):
     def __str__(self):
         return self.name
 
+
 class Check(models.Model):
     url_name = models.ForeignKey('Url', on_delete=models.CASCADE)
     has_expected_title = models.BooleanField()
@@ -22,6 +23,17 @@ class Check(models.Model):
     has_expected_text = models.BooleanField()
     created_at = models.DateTimeField(default=timezone.now)
 
+    def __str__(self):
+        return self.created_at
+
+
 class LastParse(models.Model):
     parse_data = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.parse_data
+
+    def save(self, *args, **kwargs):
+        LastParse.objects.all().delete()
+        super(LastParse, self).save(*args, **kwargs)

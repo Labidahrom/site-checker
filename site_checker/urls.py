@@ -14,4 +14,5 @@ urlpatterns = [
     path('add_url/', views.CreateUrl.as_view(), name='add_url'),
     path('add_urls/', views.CreateUrls.as_view(), name='add_urls'),
     path('parse_urls/', views.ParseUrls.as_view(), name='parse_urls'),
+    path('parse_urls_list/', views.ParsedUrlsList.as_view(), name='parse_urls_list'),
 ]

@@ -5,7 +5,10 @@
 <h1>Данные для добавления URL в проверку</h1>
     <div class="row">
         <div class="col-md-12">
-            <textarea id="myText" rows="4" class="form-control">{{ urls_data|join:"" }}</textarea>
+            <textarea id="myText" rows="10" class="form-control">
+{{ parse_urls_data|join:"" }}
+                
+            </textarea>
             <button onclick="myFunction()" class="btn btn-primary mt-2">Скопировать</button>
         </div>
     </div>

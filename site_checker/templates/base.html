@@ -36,12 +36,12 @@
         <a class="nav-link" href="{% url 'add_urls' %}"> Добавить список URL </a>
       </li>
       <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="{% url 'parse_urls' %}" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="nav-link dropdown-toggle" href="{% url 'parse_urls' %}" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Пропарсить URL
-        </a>
+        </span>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
             <a class="dropdown-item" href="{% url 'parse_urls' %}">Пропарсить список URL</a>
-            <a class="dropdown-item" href="{% url 'add_urls' %}">Данные последнего парсинга</a>
+            <a class="dropdown-item" href="{% url 'parse_urls_list' %}">Данные последнего парсинга</a>
         </div>
       </li>
 
