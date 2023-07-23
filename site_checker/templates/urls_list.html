@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <h1>Список URL</h1>
-<p><a href="{% url 'add_url' %}">Добавить УРЛ</a></p>
+<p><a href="{% url 'add_urls' %}">Добавить УРЛ</a></p>
 <div class="table-responsive">
   <table class="table table-striped">
     <thead>
@@ -22,11 +22,11 @@
         <td>{{ url.expected_text }}</td>
         <td>{{ url.check_details }}</td>
         <td>
-          <form action="/" method="get">
+          <form action="{% url 'update_url' pk=url.id %}" method="get">
           {% csrf_token %}
           <input type="submit" value='Изменить настройки'>
           </form>
-          <form action="/" method="get">
+          <form action="{% url 'delete_url' pk=url.id %}" method="get">
           {% csrf_token %}
           <input type="submit" value='Удалить URL'>
           </form>

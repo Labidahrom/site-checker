@@ -11,8 +11,9 @@ urlpatterns = [
     path('urls/', views.UrlsList.as_view(), name='url_list'),
     path('checks/', views.ChecksList.as_view(), name='checks_list'),
     path('start_checks/', views.CheckUrl.as_view(), name='start_checks'),
-    path('add_url/', views.CreateUrl.as_view(), name='add_url'),
     path('add_urls/', views.CreateUrls.as_view(), name='add_urls'),
+    path('<int:pk>/update/', views.UpdateUrl.as_view(), name='update_url'),
+    path('<int:pk>/delete/', views.DeleteUrl.as_view(), name='delete_url'),
     path('parse_urls/', views.ParseUrls.as_view(), name='parse_urls'),
     path('parse_urls_list/', views.ParsedUrlsList.as_view(), name='parse_urls_list'),
 ]

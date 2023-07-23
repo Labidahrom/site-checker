@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+{% load bootstrap4 %}
+<div class="container wrapper flex-grow-1">
+    <h1>Изменить URL</h1>
+<form  class="form-group" action="{% url 'update_url' pk=url.id %}" method="post">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <button type="submit" class="btn btn-primary">Изменить</button>
+</form>
+</div>
+{% endblock %}

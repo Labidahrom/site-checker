@@ -4,13 +4,25 @@ from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.forms import AuthenticationForm
-from django.views.generic import CreateView
+from django.views.generic import UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.views import View
 from site_checker.models import Url, Check, LastParse
 from site_checker.modules.parser import make_url_check, parse_url
 import re
 from django import forms
+
+
+class UrlUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Url
+        fields = [
+            'name',
+            'expected_title',
+            'expected_response_by_http',
+            'expected_response_by_https',
+            'expected_text'
+        ]
 
 
 class UrlListForm(forms.Form):
@@ -97,21 +109,6 @@ class LogoutUser(LogoutView):
     next_page = reverse_lazy('index')
 
 
-class CreateUrl(SuccessMessageMixin, CreateView):
-    model = Url
-    fields = [
-        'name',
-        'expected_title',
-        'expected_response_by_http',
-        'expected_response_by_https',
-        'expected_text',
-        'check_details',
-    ]
-    template_name = 'create_url.html'
-    success_url = reverse_lazy('url_list')
-    success_message = 'Url created'
-
-
 class CreateUrls(View):
     def get(self, request, *args, **kwargs):
         form = UrlListForm()
@@ -121,6 +118,19 @@ class CreateUrls(View):
         url_string = request.POST.get('url_string', '')
         add_urls_data(url_string)
         return render(request, 'index.html')
+
+
+class UpdateUrl(UpdateView):
+    form_class = UrlUpdateForm
+    model = Url
+    template_name = 'update_url.html'
+    success_url = reverse_lazy('url_list')
+
+
+class DeleteUrl(DeleteView):
+    model = Url
+    template_name = 'delete_url.html'
+    success_url = reverse_lazy('url_list')
 
 
 class ParseUrls(View):
