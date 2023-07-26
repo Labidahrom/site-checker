@@ -14,6 +14,7 @@ django-bootstrap = "^0.2.4"
 requests = "^2.31.0"
 beautifulsoup4 = "^4.12.2"
 chardet = "^5.1.0"
+aiohttp = "^3.8.5"
 
 
 [build-system]

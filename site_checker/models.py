@@ -37,3 +37,15 @@ class LastParse(models.Model):
     def save(self, *args, **kwargs):
         LastParse.objects.all().delete()
         super(LastParse, self).save(*args, **kwargs)
+
+
+class TextCheckData(models.Model):
+    text_check_data = models.TextField()
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.text_check_data
+
+    def save(self, *args, **kwargs):
+        TextCheckData.objects.all().delete()
+        super(TextCheckData, self).save(*args, **kwargs)
