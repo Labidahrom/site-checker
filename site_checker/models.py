@@ -49,3 +49,12 @@ class TextCheckData(models.Model):
     def save(self, *args, **kwargs):
         TextCheckData.objects.all().delete()
         super(TextCheckData, self).save(*args, **kwargs)
+
+
+class Notification(models.Model):
+    notification = models.TextField()
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.text_check_data
+

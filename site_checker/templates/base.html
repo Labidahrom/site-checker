@@ -24,21 +24,21 @@
   <div class="collapse navbar-collapse" id="navbarsExample04">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'url_list' %}"> Список URL </a>
+        <a class="nav-link" href="{% url 'url_list' %}"> URL </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'checks_list' %}"> История проверок </a>
+        <a class="nav-link" href="{% url 'checks_list' %}"> Проверки </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'add_urls' %}"> Добавить список URL </a>
+        <a class="nav-link" href="{% url 'add_urls' %}"> Добавить URL </a>
       </li>
       <li class="nav-item dropdown">
         <span class="nav-link dropdown-toggle" href="{% url 'parse_urls' %}" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Пропарсить URL
+            Подготовить URL к проверке
         </span>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="{% url 'parse_urls' %}">Пропарсить список URL</a>
-            <a class="dropdown-item" href="{% url 'parse_urls_list' %}">Данные последнего парсинга</a>
+            <a class="dropdown-item" href="{% url 'parse_urls' %}">Подготовить URL к проверке</a>
+            <a class="dropdown-item" href="{% url 'parse_urls_list' %}">Данные последней подготовки</a>
         </div>
       </li>
       <li class="nav-item dropdown">
@@ -78,7 +78,12 @@
   </div>
   {% endif %}
 </nav>
-
+{% for notification in request.notifications %}
+    <div class="notification alert alert-primary border border-info">
+        {{ notification.notification }}
+        <button class="dismiss-notification-button btn btn-secondary" data-notification-id="{{ notification.id }}">Ок</button>
+    </div>
+{% endfor %}
 {% if messages %}
 <div class="messages">
     {% for message in messages %}
@@ -86,5 +91,22 @@
     {% endfor %}
 </div>
 {% endif %}
+<script>
+$('.dismiss-notification-button').click(function() {
+    var notificationId = $(this).data('notification-id');
+    var notificationElement = $(this).closest('.notification');
 
+    $.ajax({
+        url: '/dismiss-notification/' + notificationId + '/',
+        type: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'  // include CSRF token for Django to process POST request
+        },
+        success: function(data) {
+            // Hide the notification in the DOM
+            notificationElement.hide();
+        }
+    });
+});
+</script>
 {% block content %}{% endblock %}

@@ -18,4 +18,5 @@ urlpatterns = [
     path('parse_urls_list/', views.PreparedUrlsList.as_view(), name='parse_urls_list'),
     path('check_text/', views.CheckText.as_view(), name='check_text'),
     path('check_text_list/', views.CheckTextList.as_view(), name='check_text_list'),
+    path('dismiss-notification/<int:notification_id>/', views.dismiss_notification, name='dismiss_notification'),
 ]

@@ -1,8 +1,18 @@
+from __future__ import absolute_import
 from bs4 import BeautifulSoup
 import requests
 import chardet
 import re
-from site_checker.models import Url, Check, LastParse, TextCheckData
+
+from django.db import IntegrityError
+
+from site_checker.models import Url, Check, LastParse, TextCheckData, Notification
+from celery import shared_task
+import time
+
+
+def add_notification(notification):
+    Notification.objects.create(notification=notification)
 
 
 def make_request(url):
@@ -96,16 +106,25 @@ def prepare_url_data_string_for_db(url_string):
     }
 
 
+@shared_task
 def add_urls_data_to_db(url_strings):
     url_list = url_strings.split('\n')
     for url_data_string in url_list:
-        if not validate_url_data_string(url_data_string):
+        try:
+            if not validate_url_data_string(url_data_string):
+                continue
+            url_data = prepare_url_data_string_for_db(url_data_string)
+            Url.objects.create(**url_data)
+        except IntegrityError:
+            add_notification(f'{url_data_string} уже добавлена в проверку')
             continue
-        url_data = prepare_url_data_string_for_db(url_data_string)
-        Url.objects.create(**url_data)
+    add_notification(f'"{url_strings[:100]}" будут добавлены в базу данных')
 
 
+@shared_task
 def add_check_urls_data_to_db():
+    current_time = time.ctime()
+    add_notification(f'Проверка от {current_time} началась')
     urls_list = Url.objects.all()
     for url in urls_list:
         check_data = check_url(url)
@@ -124,6 +143,7 @@ def add_check_urls_data_to_db():
             url_entry = Url.objects.get(id=url.id)
             url_entry.check_details = status_string
             url_entry.save()
+    add_notification(f'Проверка от {current_time} закончилась')
 
 
 def prepare_urls_data(url_strings):
@@ -133,27 +153,33 @@ def prepare_urls_data(url_strings):
         parse_result += (f'{url}{format_url_data_to_string(url)}\n')
     return parse_result
 
+
+@shared_task
 def add_prepared_urls_data_to_db(check_box, url_strings):
+    add_notification(f'Подготовка {url_strings[:50]} началась')
     prepared_urls_data = prepare_urls_data(url_strings)
     if check_box:
         add_urls_data_to_db(prepared_urls_data)
     LastParse.objects.create(parse_data=prepared_urls_data)
+    add_notification(f'Подготовка {url_strings[:50]} закончена')
 
 
-def check_text_strings(text_check_string):
-    url_data = text_check_string.split('||')
-    content = make_request(url_data[0])
-    if content:
-        has_text = 'Да' if url_data[1] in content.text else 'Нет'
-        return f'{url_data[0]}||{url_data[1]}||{has_text}||{content.status_code}'
+def check_text_on_page(text_check_string):
+    page, text_to_find = text_check_string.split('||')
+    if page:
+        has_text = 'Да' if text_to_find in page.text else 'Нет'
+        return f'{text_check_string}||{has_text}||{page.status_code}'
     else:
-        return f'{url_data[0]}||страница не найдена'
+        return f'{page}||страница не найдена'
 
 
+@shared_task
 def add_text_check_data_to_db(text_check_strings):
+    add_notification(f'Страницы "{text_check_strings[:50]}" добавлены в проверку')
     text_check_list = text_check_strings.split('\n')
     text_check_result = ''
-    for text_check_string in text_check_list:
-        text_check_data = check_text_strings(text_check_string)
-        text_check_result += (text_check_data + '\n')
+    for string in text_check_list:
+        text_check_string = check_text_on_page(string)
+        text_check_result += (text_check_string + '\n')
         TextCheckData.objects.create(text_check_data=text_check_result)
+    add_notification(f'Страницы "{text_check_strings[:50]}" проверены')

@@ -7,10 +7,14 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.views.generic import UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.views import View
-from site_checker.models import Url, Check, LastParse, TextCheckData
+from site_checker.models import Url, Check, LastParse, TextCheckData, Notification
 from site_checker import forms
-from site_checker.modules.parser import add_urls_data_to_db, prepare_urls_data, \
-    add_check_urls_data_to_db, add_text_check_data_to_db, add_prepared_urls_data_to_db
+from django.views.decorators.http import require_POST
+from site_checker.modules.parser import add_urls_data_to_db, add_check_urls_data_to_db, \
+    add_text_check_data_to_db, add_prepared_urls_data_to_db
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+
 
 
 def index(request):
@@ -36,7 +40,7 @@ class CreateUrls(View):
 
     def post(self, request, *args, **kwargs):
         url_string = request.POST.get('url_string', '')
-        add_urls_data_to_db(url_string)
+        add_urls_data_to_db.delay(url_string)
         return render(request, 'index.html')
 
 
@@ -61,7 +65,7 @@ class PrepareUrlsData(View):
     def post(self, request, *args, **kwargs):
         url_strings = request.POST.get('url_string', '')
         check_box = request.POST.get('checkbox', '')
-        add_prepared_urls_data_to_db(check_box, url_strings)
+        add_prepared_urls_data_to_db.delay(check_box, url_strings)
 
         return render(request, 'index.html')
 
@@ -89,7 +93,7 @@ class ChecksList(ListView):
 
 class CheckUrl(View):
     def post(self, request, *args, **kwargs):
-        add_check_urls_data_to_db()
+        add_check_urls_data_to_db.delay()
         return redirect('checks_list')
 
 
@@ -100,7 +104,7 @@ class CheckText(View):
 
     def post(self, request, *args, **kwargs):
         text_string = request.POST.get('url_string', '')
-        add_text_check_data_to_db(text_string)
+        add_text_check_data_to_db.delay(text_string)
         return render(request, 'index.html')
 
 
@@ -111,3 +115,11 @@ class CheckTextList(ListView):
 
     def get_object(self):
         return TextCheckData.objects.first()
+
+
+@require_POST
+def dismiss_notification(request, notification_id):
+    notification = get_object_or_404(Notification, id=notification_id)
+    notification.is_active = False
+    notification.save()
+    return JsonResponse({'status': 'ok'})
