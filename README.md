@@ -1,0 +1,2 @@
+# Django site checker
+
