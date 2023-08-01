@@ -512,6 +512,22 @@ files = [
 ]
 
 [[package]]
+name = "django-bootstrap4"
+version = "23.2"
+description = "Bootstrap 4 for Django"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "django_bootstrap4-23.2-py3-none-any.whl", hash = "sha256:6c895cdda58de1360bf82cc9e31014ad158dad680198ac8366ca33c19efa972f"},
+    {file = "django_bootstrap4-23.2.tar.gz", hash = "sha256:6b5080a4bce80fa666ac5ce5d4c77ad6fc3c0984d4257a0060d4077f515f62e5"},
+]
+
+[package.dependencies]
+beautifulsoup4 = ">=4.8.0"
+django = ">=3.2"
+
+[[package]]
 name = "frozenlist"
 version = "1.4.0"
 description = "A list-like structure which implements collections.abc.MutableSequence"
@@ -1072,4 +1088,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "3006b2bd52a2694bf824b2cf431034c26c272de5def6ee06be663d997d4a5ecb"
+content-hash = "1a1ecbda0b4eb8b8e2aa2a2a82e2fe71dc2edfb78f93bd750ab73a032d93334a"
