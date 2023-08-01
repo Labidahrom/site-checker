@@ -56,7 +56,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'site_checker.wsgi.application'
-
+CSRF_TRUSTED_ORIGINS = ['https://*.railway.app', 'https://*.127.0.0.1']
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
