@@ -6,7 +6,7 @@ debug start:
 	poetry run python manage.py runserver
 
 make celery start:
-	poetry run celery -A site_checker worker --loglevel=info
+	poetry run celery -A site_checker worker --loglevel=info --without-gossip --without-mingle --without-heartbeat
 
 makemigrations:
 	poetry run python manage.py makemigrations site_checker
