@@ -2,7 +2,7 @@ PORT ?= 8000
 start:
 	poetry run gunicorn -w 5 -b 0.0.0.0:$(PORT) site_checker.wsgi:application
 
-celery start:
+celery:
 	poetry run celery -A site_checker worker --loglevel=info
 
 makemigrations:
