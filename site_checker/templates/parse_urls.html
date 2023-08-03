@@ -2,7 +2,7 @@
 {% block content %}
 {% load bootstrap4 %}
 <div class="container wrapper flex-grow-1">
-    <h1>Пропарсить список URL</h1>
+    <h1>Подготовить список URL для добавления в проверку</h1>
 <form  class="form-group" action="{% url 'parse_urls' %}" method="post">
     {% csrf_token %}
     {% bootstrap_form form %}

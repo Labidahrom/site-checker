@@ -17,10 +17,10 @@ class UrlUpdateForm(forms.ModelForm):
 class UrlListForm(forms.Form):
     url_string = forms.CharField(
         label='Введите список URL',
-        widget=forms.Textarea(attrs={'placeholder': 'Вставьте запись вида: url без протокола'
+        widget=forms.Textarea(attrs={'placeholder': 'Вставьте запись вида: "url без протокола'
                                                     '||title||код ответа по http||код ответа '
                                                     'по https||текст который нужно найти на '
-                                                    'странице. Данные по каждому url должны'
+                                                    'странице". Данные по каждому url должны '
                                                     'начинаться с новой строки'})
     )
 
@@ -28,8 +28,8 @@ class UrlListForm(forms.Form):
 class CheckTextForm(forms.Form):
     url_string = forms.CharField(
         label='Введите список значений',
-        widget=forms.Textarea(attrs={'placeholder': 'Вставьте запись вида: url c протоколом'
-                                                    '||текст который должен найтись, например'
+        widget=forms.Textarea(attrs={'placeholder': 'Вставьте запись вида: "url c протоколом'
+                                                    '||текст который должен найтись", например'
                                                     'https://ya.ru/||Яндекс'})
     )
 
