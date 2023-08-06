@@ -61,18 +61,18 @@ CSRF_TRUSTED_ORIGINS = ['https://*.railway.app', 'https://*.127.0.0.1']
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# if not DEBUG:
-DATABASES = {
-    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'),
-                                      engine='django.db.backends.postgresql')
-}
-# else:
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.sqlite3',
-#             'NAME': BASE_DIR / 'db.sqlite3',
-#         }
-#     }
+if not DEBUG:
+    DATABASES = {
+        'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'),
+                                          engine='django.db.backends.postgresql')
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
@@ -115,6 +115,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+TEST_RUNNER = 'site_checker.test_runner.TestRunnerWithCeleryEagerSet'
 
 CELERY_BROKER_URL = REDIS_URL
 broker_connection_retry_on_startup = True

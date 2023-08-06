@@ -7,14 +7,16 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.views.generic import UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.views import View
-from site_checker.models import Url, Check, LastParse, TextCheckData, Notification
+from site_checker.models import (Url, Check, LastParse, TextCheckData,
+                                 Notification)
 from site_checker import forms
 from django.views.decorators.http import require_POST
-from site_checker.modules.parser import add_urls_data_to_db, add_check_urls_data_to_db, \
-    add_text_check_data_to_db, add_prepared_urls_data_to_db
+from site_checker.modules.parser import (add_urls_data_to_db,
+                                         add_check_urls_data_to_db,
+                                         add_text_check_data_to_db,
+                                         add_prepared_urls_data_to_db)
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
-
 
 
 def index(request):
@@ -66,7 +68,6 @@ class PrepareUrlsData(View):
         url_strings = request.POST.get('url_string', '')
         check_box = request.POST.get('checkbox', '')
         add_prepared_urls_data_to_db.delay(check_box, url_strings)
-
         return render(request, 'index.html')
 
 

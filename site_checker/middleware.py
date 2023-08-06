@@ -1,5 +1,6 @@
 from site_checker.models import Notification
 
+
 class NotificationMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response

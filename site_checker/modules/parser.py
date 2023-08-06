@@ -3,16 +3,33 @@ from bs4 import BeautifulSoup
 import requests
 import chardet
 import re
-
 from django.db import IntegrityError
-
-from site_checker.models import Url, Check, LastParse, TextCheckData, Notification
+from site_checker.models import (Url, Check, LastParse, TextCheckData,
+                                 Notification)
 from celery import shared_task
 import time
 
 
+def validate_url_data_string(url_string):
+    pattern = r'^(?!.*http(s)?://)[^|]+(\|\|[^|]+){4}$'
+    return bool(re.match(pattern, url_string))
+
+
+def validate_url_string(url_string):
+    pattern = r'^(?!-)[A-Za-z0-9-]{1,63}(?<!-)\.[A-Za-z]{2,}$'
+    return bool(re.match(pattern, url_string))
+
+
 def add_notification(notification):
     Notification.objects.create(notification=notification)
+
+
+def strip_breaks(line):
+    return line.strip('\r').strip('\n')
+
+
+def strip_protocol(line):
+    return line.replace("https://", "").replace("http://", "")
 
 
 def make_request(url):
@@ -46,8 +63,10 @@ def check_expected_text(content, text):
     return text in str(content)
 
 
-def get_page_content(url):
-    url = url.strip('\r')
+def get_page_content(url_string):
+    url = strip_breaks(url_string)
+    if not validate_url_string(url):
+        return
     http_response = make_request(f'http://{url}')
     https_response = make_request(f'https://{url}')
     if https_response:
@@ -58,41 +77,47 @@ def get_page_content(url):
         return
     return {
         'title': extract_title(page_content),
-        'actual_response_by_http': http_response.status_code if http_response else None,
-        'actual_response_by_https': https_response.status_code if https_response else None
+        'actual_response_by_http':
+            http_response.status_code if http_response else None,
+        'actual_response_by_https':
+            https_response.status_code if https_response else None
     }, page_content
 
 
 def check_url(url):
     page_data, page_content = get_page_content(url.name)
-    page_data['has_expected_text'] = check_expected_text(page_content, url.expected_text)
+    page_data['has_expected_text'] = (
+        check_expected_text(page_content, url.expected_text))
     return page_data
 
 
 def format_url_data_to_string(url):
-    page_data, page_content = get_page_content(url)
-    return f"||{page_data['title']}||{page_data['actual_response_by_http']}" \
-           f"||{page_data['actual_response_by_https']}||{extract_h1(page_content)}"
+    page = get_page_content(url)
+    if not page:
+        return
+    page_data, page_content = page
+    return (f"||{page_data['title']}"
+            f"||{page_data['actual_response_by_http']}"
+            f"||{page_data['actual_response_by_https']}"
+            f"||{extract_h1(page_content)}")
 
 
 def make_check_details(url, check_data):
     status_field = ''
     if url.expected_title != check_data['title']:
-        status_field += f'Title не совпадает, фактический результат: {check_data["title"]}. '
+        status_field += f'Title не совпадает: {check_data["title"]}. '
     if url.expected_response_by_http != check_data['actual_response_by_http']:
-        status_field += f'Http ответ не совпадает, фактический результат: {check_data["actual_response_by_http"]}. '
-    if url.expected_response_by_https != check_data['actual_response_by_https']:
-        status_field += f'Https ответ не совпадает, фактический результат: {check_data["actual_response_by_https"]}. '
+        status_field += (f'Http ответ не совпадает: '
+                         f'{check_data["actual_response_by_http"]}. ')
+    if (url.expected_response_by_https !=
+            check_data['actual_response_by_https']):
+        status_field += (f'Https ответ не совпадает: '
+                         f'{check_data["actual_response_by_https"]}. ')
     if not check_data['has_expected_text']:
-        status_field += 'Проверочный текст на странице не найден. '
+        status_field += 'Проверочный текст на странице не совпадает. '
     if not status_field:
         status_field = 'ok'
     return status_field
-
-
-def validate_url_data_string(url_string):
-    pattern = r'^(?!.*http(s)?://)[^|]+(\|\|[^|]+){4}$'
-    return bool(re.match(pattern, url_string))
 
 
 def prepare_url_data_string_for_db(url_string):
@@ -102,7 +127,7 @@ def prepare_url_data_string_for_db(url_string):
         'expected_title': url_data[1],
         'expected_response_by_http': int(url_data[2]),
         'expected_response_by_https': int(url_data[3]),
-        'expected_text': url_data[4],
+        'expected_text': strip_breaks(url_data[4]),
     }
 
 
@@ -112,11 +137,12 @@ def add_urls_data_to_db(url_strings):
     for url_data_string in url_list:
         try:
             if not validate_url_data_string(url_data_string):
+                print('object_not_valid')
                 continue
             url_data = prepare_url_data_string_for_db(url_data_string)
             Url.objects.create(**url_data)
         except IntegrityError:
-            add_notification(f'{url_data_string} уже добавлена в проверку')
+            print('object_didnt_created')
             continue
     add_notification(f'"{url_strings[:100]}" будут добавлены в базу данных')
 
@@ -147,15 +173,18 @@ def add_check_urls_data_to_db():
 
 
 def prepare_urls_data(url_strings):
-    url_list = [url.strip("\r") for url in url_strings.split('\n')]
+    url_list = [strip_protocol(strip_breaks(url))
+                for url in url_strings.split('\n')]
     parse_result = ''
     for url in url_list:
-        parse_result += (f'{url}{format_url_data_to_string(url)}\n')
+        parse_result += f'{url}{format_url_data_to_string(url)}\n'
     return parse_result
 
 
 @shared_task
 def add_prepared_urls_data_to_db(check_box, url_strings):
+    if not url_strings:
+        return
     add_notification(f'Подготовка {url_strings[:50]} началась')
     prepared_urls_data = prepare_urls_data(url_strings)
     if check_box:
@@ -165,21 +194,25 @@ def add_prepared_urls_data_to_db(check_box, url_strings):
 
 
 def check_text_on_page(text_check_string):
-    page, text_to_find = text_check_string.split('||')
+    if '||' not in text_check_string:
+        return ''
+    url, text_to_find = strip_breaks(text_check_string).split('||')
+    page = make_request(url)
     if page:
-        has_text = 'Да' if text_to_find in page.text else 'Нет'
-        return f'{text_check_string}||{has_text}||{page.status_code}'
+        has_text = text_to_find in page.text
+        return f'{url}||{text_to_find}||{has_text}||{page.status_code}'
     else:
         return f'{page}||страница не найдена'
 
 
 @shared_task
 def add_text_check_data_to_db(text_check_strings):
-    add_notification(f'Страницы "{text_check_strings[:50]}" добавлены в проверку')
+    add_notification(
+        f'Страницы "{text_check_strings[:50]}" добавлены в проверку')
     text_check_list = text_check_strings.split('\n')
     text_check_result = ''
     for string in text_check_list:
         text_check_string = check_text_on_page(string)
         text_check_result += (text_check_string + '\n')
-        TextCheckData.objects.create(text_check_data=text_check_result)
+    TextCheckData.objects.create(text_check_data=text_check_result)
     add_notification(f'Страницы "{text_check_strings[:50]}" проверены')
