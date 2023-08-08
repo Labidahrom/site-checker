@@ -202,7 +202,7 @@ def check_text_on_page(text_check_string):
         has_text = text_to_find in page.text
         return f'{url}||{text_to_find}||{has_text}||{page.status_code}'
     else:
-        return f'{page}||страница не найдена'
+        return f'{url}||страница не найдена'
 
 
 @shared_task

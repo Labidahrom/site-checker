@@ -1,0 +1,21 @@
+[WARNING/MainProcess] /home/roman/.cache/pypoetry/virtualenvs/site-checker-7w_O4fK--py3.10/lib/python3.10/site-packages/celery/worker/consumer/consumer.py:498: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[INFO/MainProcess] Connected to redis://localhost:6379/0
+[WARNING/MainProcess] /home/roman/.cache/pypoetry/virtualenvs/site-checker-7w_O4fK--py3.10/lib/python3.10/site-packages/celery/worker/consumer/consumer.py:498: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[INFO/MainProcess] mingle: searching for neighbors
+[INFO/MainProcess] mingle: all alone
+[INFO/MainProcess] celery@roman-HP-Pavilion-Laptop-15-eh2xxx ready.
+[INFO/MainProcess] Task site_checker.modules.parser.add_prepared_urls_data_to_db[830ec9e0-89f0-430b-be4a-a8a6e032b72a] received
+[INFO/ForkPoolWorker-15] Task site_checker.modules.parser.add_prepared_urls_data_to_db[830ec9e0-89f0-430b-be4a-a8a6e032b72a] succeeded in 0.04580792499928066s: None
+[INFO/MainProcess] Task site_checker.modules.parser.add_urls_data_to_db[2436a77b-fd48-420f-8595-3b6cda2e540a] received
+[WARNING/ForkPoolWorker-15] object_didnt_created
+[INFO/ForkPoolWorker-15] Task site_checker.modules.parser.add_urls_data_to_db[2436a77b-fd48-420f-8595-3b6cda2e540a] succeeded in 0.09461915100018814s: None

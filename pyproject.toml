@@ -23,6 +23,8 @@ python-dotenv = "^1.0.0"
 django-bootstrap4 = "^23.2"
 psycopg2-binary = "^2.9.6"
 flake8 = "^6.1.0"
+logging = "^0.4.9.6"
+logbook = "^1.6.0"
 
 
 [build-system]
