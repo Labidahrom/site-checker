@@ -18,11 +18,9 @@ class UrlListForm(forms.Form):
     url_string = forms.CharField(
         label='Введите список URL',
         widget=forms.Textarea(
-            attrs={'placeholder': 'Вставьте запись вида: "url без протокола'
-                                  '||title||код ответа по http||код ответа '
-                                  'по https||текст который нужно найти на '
-                                  'странице". Данные по каждому url должны '
-                                  'начинаться с новой строки'})
+            attrs={'placeholder': 'example.com||title||код ответа по '
+                                  'http||код ответа по https||текст который'
+                                  ' нужно найти на странице'})
     )
 
 
@@ -30,9 +28,8 @@ class CheckTextForm(forms.Form):
     url_string = forms.CharField(
         label='Введите список значений',
         widget=forms.Textarea(
-            attrs={'placeholder': 'Вставьте запись вида: "url c протоколом'
-                                  '||текст который должен найтись", например'
-                                  ' "https://ya.ru/||Яндекс"'})
+            attrs={'placeholder': 'https://example.com||текст который должен'
+                                  ' найтись'})
     )
 
 
@@ -40,8 +37,7 @@ class UrlParseListForm(forms.Form):
     url_string = forms.CharField(
         label='Введите список URL',
         widget=forms.Textarea(
-            attrs={'placeholder': 'Вставьте список URL, каждый с новой '
-                                  'строки'})
+            attrs={'placeholder': 'example.com'})
     )
-    checkbox = forms.BooleanField(label='Добавить данные URL в проверку',
+    checkbox = forms.BooleanField(label='Сохранить результат в списке url',
                                   required=False)

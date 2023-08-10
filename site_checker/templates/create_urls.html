@@ -2,7 +2,11 @@
 {% block content %}
 {% load bootstrap4 %}
 <div class="container wrapper flex-grow-1">
-    <h1>Добавить URL</h1>
+    <h1>Добавить URL в проверку</h1>
+Что бы добавить список url в проверку вставьте запись вида:
+домен без протокола||title||код ответа по http||код ответа по https||текст который нужно найти на странице'. Пример правильной записи:<br><br>
+<b>example.com||Тайтл сайта example.com||301||200||Искомый текст на странице</b><br><br>
+Каждый проверяемый url должен начинаться с новой строки. Записи можно не готовить самостоятельно, а сделать на <a href="{% url 'parse_urls' %}">этой странице</a> просто введя список нужных url.
 <form  class="form-group" action="{% url 'add_urls' %}" method="post">
     {% csrf_token %}
     {% bootstrap_form form %}

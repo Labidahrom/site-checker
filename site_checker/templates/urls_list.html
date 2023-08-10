@@ -1,7 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
 <h1>Список URL</h1>
-<p><a href="{% url 'add_urls' %}">Добавить УРЛ</a></p>
+<p>Здесь выводится список url и те значения которые должны быть на данном url. Если в ходе проверки полученные значения
+ по url не соответствуют тем, что указаны на данной странице, об этом будет написано в поле "Статус проверки". Также может возникнуть
+  проблема с проверкой содержимого h1: проверка может показать что его нет на странице, в то время как он там есть. Такое происходит
+  когда текст h1 может быть разделен каким то тегом, например br. В этом случае можно просто отредактировать проверочные
+  данные и указать другой фрагмент текста.
+</p>
+<form class="p-1" action="{% url 'start_checks' %}" method="post">
+{% csrf_token %}
+<input type="submit" value='Запустить проверку'>
+</form>
+<form class="p-1"  action="{% url 'add_urls' %}" method="get">
+{% csrf_token %}
+<input type="submit" value='Добавить УРЛ'>
+</form>
 <div class="table-responsive">
   <table class="table table-striped">
     <thead>
@@ -24,7 +37,7 @@
         <td>
           <form action="{% url 'update_url' pk=url.id %}" method="get">
           {% csrf_token %}
-          <input type="submit" value='Изменить настройки'>
+          <input type="submit" value='Изменить проверочные данные'>
           </form>
           <form action="{% url 'delete_url' pk=url.id %}" method="get">
           {% csrf_token %}

@@ -3,6 +3,9 @@
 {% load bootstrap4 %}
 <div class="container wrapper flex-grow-1">
     <h1>Проверить наличие текста на страницах</h1>
+Проверка позволяет узнать есть ли обозначенный текст на указанном url. Для проверки вставьте запись вида url с протоколом||текст который нужно найти на странице'. Пример правильной записи:<br><br>
+<b>https://example.com||Я текст который нужно найти</b><br><br>
+Каждый проверяемый url должен начинаться с новой строки. После проверки результат будет на <a href="{% url 'check_text_list' %}">этой странице</a>
 <form  class="form-group" action="{% url 'check_text' %}" method="post">
     {% csrf_token %}
     {% bootstrap_form form %}
