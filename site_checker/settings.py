@@ -58,11 +58,18 @@ TEMPLATES = [
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
     'handlers': {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
             'filename': 'django_debug.log',
+            'formatter': 'verbose',
         },
     },
     'loggers': {
@@ -73,6 +80,7 @@ LOGGING = {
         },
     },
 }
+
 
 WSGI_APPLICATION = 'site_checker.wsgi.application'
 CSRF_TRUSTED_ORIGINS = ['https://*.railway.app', 'https://*.127.0.0.1']
