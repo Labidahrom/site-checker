@@ -18,7 +18,7 @@ def setup_logging(logfile="celery.log"):
         root_logger.removeHandler(handler)
 
     file_handler = logging.FileHandler(logfile)
-    file_handler.setFormatter(logging.Formatter(LOG_FORMAT, datefmt='%Y-%m-%d %H:%M:%S'))
+    file_handler.setFormatter(logging.Formatter(LOG_FORMAT))
     file_handler.setLevel(LOG_LEVEL)
     root_logger.addHandler(file_handler)
 
