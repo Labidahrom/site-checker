@@ -8,6 +8,12 @@ from site_checker.models import (Url, Check, LastParse, TextCheckData,
                                  Notification)
 from celery import shared_task
 import time
+import os
+from dotenv import load_dotenv
+
+
+load_dotenv()
+USER_AGENT = os.getenv("USER_AGENT")
 
 
 def validate_url_data_string(url_string):
@@ -33,8 +39,11 @@ def strip_protocol(line):
 
 
 def make_request(url):
+    headers = {
+        'User-Agent': USER_AGENT
+    }
     try:
-        response = requests.get(url, allow_redirects=False)
+        response = requests.get(url, allow_redirects=False, headers=headers)
         response.raise_for_status()
         coding_check = chardet.detect(response.content)
         encoding = coding_check['encoding']
