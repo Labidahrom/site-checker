@@ -22,7 +22,7 @@ def validate_url_data_string(url_string):
 
 
 def validate_url_string(url_string):
-    pattern = r'^(?!-)([A-Za-z0-9-]{1,63}(?<!-)\.){1,}[A-Za-z]{2,}$'
+    pattern = r'.*\..*'
     return bool(re.match(pattern, url_string))
 
 
