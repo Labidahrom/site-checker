@@ -21,6 +21,7 @@
       <tr>
         <th>URL</th>
         <th>Title</th>
+        <th>Description</th>
         <th>Коды ответа по http</th>
         <th>Tекст на странице</th>
         <th>Статус проверки</th>
@@ -31,6 +32,7 @@
       <tr>
         <td>{{ url.name }}</td>
         <td>{{ url.expected_title }}</td>
+        <td>{{ url.expected_description }}</td>
         <td>http: {{ url.expected_response_by_http }} | https: {{ url.expected_response_by_https }} </td>
         <td>{{ url.expected_text }}</td>
         <td>{{ url.check_details }}</td>

@@ -17,7 +17,7 @@ USER_AGENT = os.getenv("USER_AGENT")
 
 
 def validate_url_data_string(url_string):
-    pattern = r'^(?!.*http(s)?://)[^|]+(\|\|[^|]+){4}$'
+    pattern = r'^(?!.*http(s)?://)[^|]+(\|\|[^|]+){5}$'
     return bool(re.match(pattern, url_string))
 
 
@@ -68,6 +68,11 @@ def extract_h1(content):
     return h1.text if h1 else None
 
 
+def extract_description(content):
+    description = content.find('meta', property="og:description")
+    return description.get('content') if description else None
+
+
 def check_expected_text(content, text):
     return text in str(content)
 
@@ -86,6 +91,7 @@ def get_page_content(url_string):
         return
     return {
         'title': extract_title(page_content),
+        'description': extract_description(page_content),
         'actual_response_by_http':
             http_response.status_code if http_response else None,
         'actual_response_by_https':
@@ -108,7 +114,8 @@ def format_url_data_to_string(url):
     return (f"||{page_data['title']}"
             f"||{page_data['actual_response_by_http']}"
             f"||{page_data['actual_response_by_https']}"
-            f"||{extract_h1(page_content)}")
+            f"||{extract_h1(page_content)}"
+            f"||{extract_description(page_content)}")
 
 
 def make_check_details(url, check_data):
@@ -137,6 +144,7 @@ def prepare_url_data_string_for_db(url_string):
         'expected_response_by_http': int(url_data[2]),
         'expected_response_by_https': int(url_data[3]),
         'expected_text': strip_breaks(url_data[4]),
+        'expected_description': strip_breaks(url_data[5])
     }
 
 

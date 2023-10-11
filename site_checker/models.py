@@ -8,6 +8,7 @@ class Url(models.Model):
     expected_response_by_http = models.IntegerField()
     expected_response_by_https = models.IntegerField()
     expected_text = models.TextField()
+    expected_description = models.TextField()
     check_details = models.TextField(default='ok')
     created_at = models.DateTimeField(default=timezone.now)
 
@@ -21,6 +22,7 @@ class Check(models.Model):
     actual_response_by_http = models.IntegerField()
     actual_response_by_https = models.IntegerField()
     has_expected_text = models.BooleanField()
+    has_expected_description = models.BooleanField(null=True)
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
